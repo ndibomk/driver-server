@@ -128,3 +128,24 @@ export const updateStatusTour = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+
+export const userStatus= async (req,res)=>{
+  try {
+    const { id } = req.params;
+    const product = await UserModal.findByIdAndUpdate(
+      id,
+      { status: true },
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.json({ message: 'Product status updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}

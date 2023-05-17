@@ -12,6 +12,8 @@ import help from './routes/help.js'
 import testq from './routes/testq.js'
 import testa from './routes/testa.js'
 import agregateRouter from './routes/index.js'
+import todos from "./routes/todos.js";
+
 const corsOptions ={
   origin:'*', 
   credentials:true,            //access-control-allow-credentials:true
@@ -41,6 +43,7 @@ app.use('/answer',answer)
 app.use('/testq',testq)
 app.use('/testa',testa)
 app.use('/stats',agregateRouter)
+app.use("/api/todos", todos);
 
 mongoose
   .connect(process.env.MONGODB_URL)

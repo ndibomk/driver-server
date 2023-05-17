@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const tourSchema = mongoose.Schema({
   name: {type:String},
-  
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   phone:{type:String},
   address:{type:String},
   author: {

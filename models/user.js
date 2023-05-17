@@ -8,10 +8,13 @@ const userSchema = mongoose.Schema({
   role:{type:String,default:'driver'},
   // phone:{type:Number},
   status: {
-    type: String,
-    enum: ['pending', 'active'],
-    default: 'pending'
-  }
+    type: Boolean,
+    default:false
+    // enum: ['pending', 'active'],
+    // default: 'pending'
+  },
+  isComplete: {type:Boolean , default:false},
+
 
 },
 {timestamps:true});

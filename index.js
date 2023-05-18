@@ -13,6 +13,7 @@ import testq from './routes/testq.js'
 import testa from './routes/testa.js'
 import agregateRouter from './routes/index.js'
 import todos from "./routes/todos.js";
+    // "node": ">=14 <15"
 
 const corsOptions ={
   origin:'*', 

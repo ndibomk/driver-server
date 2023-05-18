@@ -14,7 +14,7 @@ const userSchema = mongoose.Schema({
     // default: 'pending'
   },
   isComplete: {type:Boolean , default:false},
-
+complete:{type:Boolean,default:false}
 
 },
 {timestamps:true});

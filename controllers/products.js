@@ -5,7 +5,6 @@ import UserModal from "../models/user.js";
 export const createTour = async (req, res) => {
   const {
     picture,
-    userId,
     address,
     phone,
     firstname,
@@ -13,10 +12,8 @@ export const createTour = async (req, res) => {
     creator,
     createdAt,
   } = req.body;
-  const user = await UserModal.findById(userId);
   const newTour = new TourModal({
     creator: req.userId,
-    userId: req.userId,
     address,
     phone,
     picture,
@@ -88,6 +85,54 @@ export const getToursByUser   = async (req, res) => {
   const userTours = await TourModal.find({ creator: id });
   res.status(200).json(userTours);
 };
+
+export const Rating = async(req,res)=>{
+  const {creator } = req.body;
+  const { star, prodId, comment } = req.body;
+ 
+  try {
+    const product = await TourModal.findById(prodId);
+    let alreadyRated = product.ratings.find(
+      (userId) => userId.postedby.toString() === creator.toString()
+    );
+    if (alreadyRated) {
+      const updateRating = await TourModal.updateOne(
+        {
+          ratings: { $elemMatch: alreadyRated },
+        },
+        {
+          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
+        },
+        {
+          new: true,
+        }
+      );
+      res.json(updateRating)
+    } else {
+      const rateProduct = await TourModal.findByIdAndUpdate(
+        prodId,
+        {
+          $push: {
+            ratings: {
+              star: star,
+              comment: comment,
+              postedby: creator,
+            },
+          },
+        },
+        {
+          new: true,
+        }
+      );
+      res.json(rateProduct)
+    }
+  } catch (error) {
+    res.status(404).json({ message: "Something went wrong" });
+
+  }
+
+
+}
 
 export const deleteTour = async (req, res) => {
   const { id } = req.params;

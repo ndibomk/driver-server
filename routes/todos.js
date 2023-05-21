@@ -1,4 +1,4 @@
-import Todo from "../models/todo.js";
+import Todo from "../models/user.js";
 import express from "express";
 import Joi from "joi";
 
@@ -16,15 +16,15 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const schema = Joi.object({
-      task: Joi.string().min(3).max(300).required(),
-      isComplete: Joi.boolean(),
-      date: Joi.date(),
-    });
+    // const schema = Joi.object({
+    //   task: Joi.string().min(3).max(300).required(),
+    //   isComplete: Joi.boolean(),
+    //   date: Joi.date(),
+    // });
 
-    const { error } = schema.validate(req.body);
+    // const { error } = schema.validate(req.body);
 
-    if (error) return res.status(400).send(error.details[0].message);
+    // if (error) return res.status(400).send(error.details[0].message);
 
     const { task, author, isComplete, date, uid } = req.body;
 
@@ -63,11 +63,11 @@ router.put("/:id", async (req, res) => {
 
   if (!todo) return res.status(404).send("Todo not found...");
 
-  const { task, author, isComplete, date, uid } = req.body;
+  const { status, isComplete, uid } = req.body;
 
   const updatedTodo = await Todo.findByIdAndUpdate(
     req.params.id,
-    { task, author, isComplete, date, uid },
+    {  isComplete:true, uid,status:true },
     { new: true }
   );
 

@@ -2,6 +2,7 @@ import express from "express";
 import auth from "../middleware/auth.js";
 
 import {
+  Rating,
   createTour,
   deleteTour,
   getRelatedTours,
@@ -10,9 +11,9 @@ import {
   
   getToursByTag,
   getToursByUser,
-  getUserPosts,
+  
   likeTour,
-  updateOrderStatus,
+  
   updateTour,
   
 } from "../controllers/products.js";
@@ -35,12 +36,15 @@ router.get("/search:key", async (req,res)=>{
 
 router.get("/", getTours);
 router.get("/:id", getTour);
-router.get("/:userId/posts",  getUserPosts);
-router.put('/:orderId', updateOrderStatus)
-router.post("/",auth,  createTour);
+router.get("/userTours/:id", auth, getToursByUser);
+
+// router.get("/:userId/posts",  getToursByUser);
+// router.put('/:orderId', updateOrderStatus)
+router.post("/", auth, createTour);
 router.delete("/:id", auth, deleteTour);
 router.patch("/:id", auth, updateTour);
 router.get("/userProjects/:id", auth, getToursByUser);
+router.put("/rating", Rating);
 
 
 export default router;

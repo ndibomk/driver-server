@@ -48,6 +48,59 @@ router.delete("/:id", async (req, res) => {
   res.send(deletedTodo);
 });
 
+router.put("/test/:id", async (req, res) => {
+  const schema = Joi.object({
+    task: Joi.string().min(3).max(300).required(),
+    isComplete: Joi.boolean(),
+    date: Joi.date(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const todo = await Todo.findById(req.params.id);
+
+  if (!todo) return res.status(404).send("Todo not found...");
+
+  const { status, isComplete, uid } = req.body;
+
+  const updatedTodo = await Todo.findByIdAndUpdate(
+    req.params.id,
+    // {  isComplete:true, uid},
+    {status:true,uid},
+    { new: true }
+  );
+
+  res.send(updatedTodo);
+});
+router.put("/status/:id", async (req, res) => {
+  const schema = Joi.object({
+    task: Joi.string().min(3).max(300).required(),
+    isComplete: Joi.boolean(),
+    date: Joi.date(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const todo = await Todo.findById(req.params.id);
+
+  if (!todo) return res.status(404).send("Todo not found...");
+
+  const { status, isComplete, uid } = req.body;
+
+  const updatedTodo = await Todo.findByIdAndUpdate(
+    req.params.id,
+    {  isComplete:true, uid},
+    
+    { new: true }
+  );
+
+  res.send(updatedTodo);
+});
+
 router.put("/:id", async (req, res) => {
   const schema = Joi.object({
     task: Joi.string().min(3).max(300).required(),
@@ -67,7 +120,8 @@ router.put("/:id", async (req, res) => {
 
   const updatedTodo = await Todo.findByIdAndUpdate(
     req.params.id,
-    {  isComplete:true, uid,status:true },
+    // {  isComplete:true, uid},
+    {status:true,uid},
     { new: true }
   );
 

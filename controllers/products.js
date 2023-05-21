@@ -11,6 +11,9 @@ export const createTour = async (req, res) => {
     lastname,
     creator,
     createdAt,
+    countInStock,
+    rating,
+    numReviews,
   } = req.body;
   const newTour = new TourModal({
     creator: req.userId,
@@ -18,7 +21,9 @@ export const createTour = async (req, res) => {
     phone,
     picture,
     name: `${firstname} ${lastname}`,
-
+    countInStock: 0,
+    rating: 0,
+    numReviews: 0,
     createdAt: new Date().toISOString(),
   });
 
@@ -77,7 +82,7 @@ export const getTour = async (req, res) => {
   }
 };
 
-export const getToursByUser   = async (req, res) => {
+export const getToursByUser = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ message: "User doesn't exist" });
@@ -86,53 +91,37 @@ export const getToursByUser   = async (req, res) => {
   res.status(200).json(userTours);
 };
 
-export const Rating = async(req,res)=>{
-  const {creator } = req.body;
-  const { star, prodId, comment } = req.body;
- 
-  try {
-    const product = await TourModal.findById(prodId);
-    let alreadyRated = product.ratings.find(
-      (userId) => userId.postedby.toString() === creator.toString()
-    );
-    if (alreadyRated) {
-      const updateRating = await TourModal.updateOne(
-        {
-          ratings: { $elemMatch: alreadyRated },
-        },
-        {
-          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
-        },
-        {
-          new: true,
-        }
-      );
-      res.json(updateRating)
-    } else {
-      const rateProduct = await TourModal.findByIdAndUpdate(
-        prodId,
-        {
-          $push: {
-            ratings: {
-              star: star,
-              comment: comment,
-              postedby: creator,
-            },
-          },
-        },
-        {
-          new: true,
-        }
-      );
-      res.json(rateProduct)
+export const Rating = async (req, res) => {
+  const productId = req.params.id;
+  const product = await TourModal.findById(productId);
+  if (product) {
+    if (product.reviews.find((x) => x.name === req.user.name)) {
+      return res
+        .status(400)
+        .send({ message: "You already submitted a review" });
     }
-  } catch (error) {
-    res.status(404).json({ message: "Something went wrong" });
 
+    const review = {
+      name: req.user.name,
+      rating: Number(req.body.rating),
+      comment: req.body.comment,
+    };
+    product.reviews.push(review);
+    product.numReviews = product.reviews.length;
+    product.rating =
+      product.reviews.reduce((a, c) => c.rating + a, 0) /
+      product.reviews.length;
+    const updatedProduct = await product.save();
+    res.status(201).send({
+      message: "Review Created",
+      review: updatedProduct.reviews[updatedProduct.reviews.length - 1],
+      numReviews: product.numReviews,
+      rating: product.rating,
+    });
+  } else {
+    res.status(404).send({ message: "Product Not Found" });
   }
-
-
-}
+};
 
 export const deleteTour = async (req, res) => {
   const { id } = req.params;

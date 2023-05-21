@@ -44,7 +44,7 @@ router.post("/", auth, createTour);
 router.delete("/:id", auth, deleteTour);
 router.patch("/:id", auth, updateTour);
 router.get("/userProjects/:id", auth, getToursByUser);
-router.put("/rating", Rating);
+router.put("/rating/:id", Rating);
 
 
 export default router;

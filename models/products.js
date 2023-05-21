@@ -1,4 +1,14 @@
 import mongoose from "mongoose";
+const reviewSchema = new mongoose.Schema(
+  {
+    name: { type: String },
+    comment: { type: String },
+    rating: { type: Number },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const tourSchema = mongoose.Schema({
   name: {type:String},
@@ -18,18 +28,11 @@ const tourSchema = mongoose.Schema({
     default: 'pending',
   },
   isComplete: {type:Boolean , default:false},
-rating:[
-  {
-    star:Number,
-    postedBy:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
+  countInStock: { type: Number},
 
-  },
-],
-comment:{type:String},
-totalRating:{
-type:String,
-default:0
-},
+rating: { type: Number },
+    numReviews: { type: Number},
+    reviews: [reviewSchema],
   creator: String,
   createdAt: {
     type: Date,
